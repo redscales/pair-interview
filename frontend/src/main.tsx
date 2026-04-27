@@ -4,6 +4,7 @@ import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
 import "./index.css";
 import RootLayout from "./routes/root-layout";
 import RecipesListPage from "./routes/recipes-list";
+import RecipeDetailPage from "./routes/recipe-detail";
 import IngredientsListPage from "./routes/ingredients-list";
 
 const router = createBrowserRouter([
@@ -13,6 +14,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to="/recipes" replace /> },
       { path: "recipes", Component: RecipesListPage },
+      { path: "recipes/:id", Component: RecipeDetailPage },
       { path: "ingredients", Component: IngredientsListPage },
     ],
   },

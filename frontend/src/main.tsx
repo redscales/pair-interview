@@ -7,6 +7,7 @@ import RecipesListPage from "./routes/recipes-list";
 import RecipeDetailPage from "./routes/recipe-detail";
 import RecipeFormPage from "./routes/recipe-form";
 import IngredientsListPage from "./routes/ingredients-list";
+import IngredientDetailPage from "./routes/ingredient-detail";
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,7 @@ const router = createBrowserRouter([
       { path: "recipes/:id", Component: RecipeDetailPage },
       { path: "recipes/:id/edit", Component: RecipeFormPage },
       { path: "ingredients", Component: IngredientsListPage },
+      { path: "ingredients/:id", Component: IngredientDetailPage },
     ],
   },
 ]);

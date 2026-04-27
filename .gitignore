@@ -1,0 +1,30 @@
+# Agent working directory (specs, plans, internal notes)
+.agents/
+
+# Interview source prompt — keep out of repo so candidates don't see it
+interview_prompt.md
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# DB
+*.db
+*.db-journal
+backend/data/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# Env
+.env
+.env.local

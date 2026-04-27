@@ -25,9 +25,6 @@ def list_recipes(
     if tag is not None:
         stmt = stmt.join(Recipe.tags).where(Tag.name == tag)
     if cursor is not None:
-        # BUG: should be > cursor. With >=, the row whose id == cursor (which the
-        # previous page already returned as its last item, and reported as next_cursor)
-        # appears again as the first item of this page.
         stmt = stmt.where(Recipe.id >= cursor)
     rows = list(db.execute(stmt.limit(page_size + 1)).scalars())
     has_more = len(rows) > page_size

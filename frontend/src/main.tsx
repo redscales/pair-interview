@@ -5,6 +5,7 @@ import "./index.css";
 import RootLayout from "./routes/root-layout";
 import RecipesListPage from "./routes/recipes-list";
 import RecipeDetailPage from "./routes/recipe-detail";
+import RecipeFormPage from "./routes/recipe-form";
 import IngredientsListPage from "./routes/ingredients-list";
 
 const router = createBrowserRouter([
@@ -14,7 +15,9 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to="/recipes" replace /> },
       { path: "recipes", Component: RecipesListPage },
+      { path: "recipes/new", Component: RecipeFormPage },
       { path: "recipes/:id", Component: RecipeDetailPage },
+      { path: "recipes/:id/edit", Component: RecipeFormPage },
       { path: "ingredients", Component: IngredientsListPage },
     ],
   },

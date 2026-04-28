@@ -29,15 +29,13 @@ export type RecipeDetail = {
 
 export type CursorPage<T> = {
   items: T[];
-  next_cursor: number | null;
+  total: number;
+  page_size: number;
+  next_cursor: string | null;
 };
 
-export type IngredientPage = {
-  items: Ingredient[];
-  total: number;
-  page: number;
-  page_size: number;
-};
+export type RecipePage = CursorPage<RecipeListItem>;
+export type IngredientPage = CursorPage<Ingredient>;
 
 export type RecipeWrite = {
   title: string;

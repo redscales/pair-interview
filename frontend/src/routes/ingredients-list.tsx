@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Pagination } from "@/components/pagination";
 import { TagFilter } from "@/components/tag-filter";
 import { api } from "@/lib/api";
 import { useTagFilter } from "@/lib/filter-store";
@@ -12,21 +12,39 @@ const PAGE_SIZE = 20;
 
 export default function IngredientsListPage() {
   const [tag] = useTagFilter();
-  const [page, setPage] = useState(1);
   const [data, setData] = useState<IngredientPage | null>(null);
+  const [cursor, setCursor] = useState<string | null>(null);
+  const [stack, setStack] = useState<(string | null)[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setError(null);
     api
-      .listIngredients({ page, page_size: PAGE_SIZE, tag })
+      .listIngredients({ cursor, page_size: PAGE_SIZE, tag })
       .then(setData)
       .catch((e) => setError(String(e)));
-  }, [page, tag]);
+  }, [cursor, tag]);
 
-  // Reset to page 1 when tag changes.
-  useEffect(() => setPage(1), [tag]);
+  useEffect(() => {
+    setCursor(null);
+    setStack([]);
+  }, [tag]);
 
+  const onNext = () => {
+    if (!data?.next_cursor) return;
+    setStack((s) => [...s, cursor]);
+    setCursor(data.next_cursor);
+  };
+  const onPrev = () => {
+    setStack((s) => {
+      const next = [...s];
+      const prev = next.pop() ?? null;
+      setCursor(prev);
+      return next;
+    });
+  };
+
+  const currentPage = stack.length + 1;
   const totalPages = data ? Math.max(1, Math.ceil(data.total / data.page_size)) : 1;
 
   return (
@@ -42,6 +60,7 @@ export default function IngredientsListPage() {
           <Link key={ing.id} to={`/ingredients/${ing.id}`}>
             <Card className="hover:bg-accent transition-colors">
               <CardContent className="py-3 flex items-center gap-3">
+                <span className="text-muted-foreground text-xs w-12">#{ing.id}</span>
                 <span className="font-medium flex-1">{ing.name}</span>
                 <span className="flex flex-wrap gap-1">
                   {ing.tags.map((t) => (
@@ -55,25 +74,14 @@ export default function IngredientsListPage() {
           </Link>
         ))}
       </div>
-      <div className="flex justify-end gap-2">
-        <Button
-          variant="outline"
-          disabled={page <= 1}
-          onClick={() => setPage((p) => Math.max(1, p - 1))}
-        >
-          Previous
-        </Button>
-        <span className="self-center text-sm">
-          Page {page} / {totalPages}
-        </span>
-        <Button
-          variant="outline"
-          disabled={page >= totalPages}
-          onClick={() => setPage((p) => p + 1)}
-        >
-          Next
-        </Button>
-      </div>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        canPrev={stack.length > 0}
+        canNext={!!data?.next_cursor}
+        onPrev={onPrev}
+        onNext={onNext}
+      />
     </div>
   );
 }

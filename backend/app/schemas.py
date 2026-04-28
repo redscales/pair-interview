@@ -53,13 +53,15 @@ class RecipeWrite(BaseModel):
     ingredients: list[RecipeIngredientWrite] = []
 
 
-class CursorPage(BaseModel):
+class RecipePage(BaseModel):
     items: list[RecipeListItem]
-    next_cursor: int | None
+    total: int
+    page_size: int
+    next_cursor: str | None
 
 
 class IngredientPage(BaseModel):
     items: list[IngredientOut]
     total: int
-    page: int
     page_size: int
+    next_cursor: str | None

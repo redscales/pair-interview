@@ -1,9 +1,8 @@
 import type {
-  CursorPage,
   Ingredient,
   IngredientPage,
   RecipeDetail,
-  RecipeListItem,
+  RecipePage,
   RecipeWrite,
   Tag,
 } from "./types";
@@ -21,17 +20,22 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return (await res.json()) as T;
 }
 
+type PageParams = { cursor?: string | null; page_size?: number; tag?: string | null };
+
+function pageQuery(params: PageParams): string {
+  const q = new URLSearchParams();
+  if (params.cursor) q.set("cursor", params.cursor);
+  if (params.page_size != null) q.set("page_size", String(params.page_size));
+  if (params.tag) q.set("tag", params.tag);
+  const qs = q.toString();
+  return qs ? `?${qs}` : "";
+}
+
 export const api = {
   listTags: () => request<Tag[]>("/api/tags"),
 
-  listRecipes: (params: { cursor?: number | null; page_size?: number; tag?: string | null }) => {
-    const q = new URLSearchParams();
-    if (params.cursor != null) q.set("cursor", String(params.cursor));
-    if (params.page_size != null) q.set("page_size", String(params.page_size));
-    if (params.tag) q.set("tag", params.tag);
-    const qs = q.toString();
-    return request<CursorPage<RecipeListItem>>(`/api/recipes${qs ? `?${qs}` : ""}`);
-  },
+  listRecipes: (params: PageParams) =>
+    request<RecipePage>(`/api/recipes${pageQuery(params)}`),
 
   getRecipe: (id: number) => request<RecipeDetail>(`/api/recipes/${id}`),
   createRecipe: (body: RecipeWrite) =>
@@ -41,14 +45,8 @@ export const api = {
   deleteRecipe: (id: number) =>
     request<void>(`/api/recipes/${id}`, { method: "DELETE" }),
 
-  listIngredients: (params: { page?: number; page_size?: number; tag?: string | null }) => {
-    const q = new URLSearchParams();
-    if (params.page != null) q.set("page", String(params.page));
-    if (params.page_size != null) q.set("page_size", String(params.page_size));
-    if (params.tag) q.set("tag", params.tag);
-    const qs = q.toString();
-    return request<IngredientPage>(`/api/ingredients${qs ? `?${qs}` : ""}`);
-  },
+  listIngredients: (params: PageParams) =>
+    request<IngredientPage>(`/api/ingredients${pageQuery(params)}`),
 
   getIngredient: (id: number) => request<Ingredient>(`/api/ingredients/${id}`),
 };

@@ -26,7 +26,7 @@ export default function RecipeFormPage() {
     api.listTags().then(setAllTags);
     // Get a generous slice for the picker; not paginated for simplicity.
     api
-      .listIngredients({ page: 1, page_size: 500, tag: null })
+      .listIngredients({ page_size: 500, tag: null })
       .then((p) => setAllIngredients(p.items));
   }, []);
 
